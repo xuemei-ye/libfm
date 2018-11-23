@@ -40,6 +40,12 @@
 #ifndef FM_LEARN_MCMC_SIMULTANEOUS_H_
 #define FM_LEARN_MCMC_SIMULTANEOUS_H_
 
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <sstream>
+#include <cstring>
+
 #include "fm_learn_mcmc.h"
 
 
@@ -237,9 +243,9 @@ void fm_learn_mcmc_simultaneous::_learn(Data& train, Data& test) {
     } else if (task == TASK_CLASSIFICATION) {
       double acc_test_this, acc_test_all, acc_test_all_but5,
         ll_test_this, ll_test_all, ll_test_all_but5;
-       _evaluate_class(pred_this, test.target, 1.0, acc_test_this, ll_test_this, num_eval_cases);
-       _evaluate_class(pred_sum_all, test.target, 1.0/(i+1), acc_test_all, ll_test_all, num_eval_cases);
-       _evaluate_class(pred_sum_all_but5, test.target, 1.0/(i-5+1), acc_test_all_but5, ll_test_all_but5, num_eval_cases);
+       _evaluate_class(pred_this, test.target, 1.0, acc_test_this, ll_test_this, num_eval_cases,i);
+       _evaluate_class(pred_sum_all, test.target, 1.0/(i+1), acc_test_all, ll_test_all, num_eval_cases,i);
+       _evaluate_class(pred_sum_all_but5, test.target, 1.0/(i-5+1), acc_test_all_but5, ll_test_all_but5, num_eval_cases,i);
 
       std::cout << "#Iter=" << std::setw(3) << i << "\tTrain=" << acc_train << "\tTest=" << acc_test_all << "\tTest(ll)=" << ll_test_all << std::endl;
 
@@ -288,10 +294,26 @@ void fm_learn_mcmc_simultaneous::_evaluate(DVector<double>& pred, DVector<DATA_F
   mae = _mae/num_cases;
 }
 
-void fm_learn_mcmc_simultaneous::_evaluate_class(DVector<double>& pred, DVector<DATA_FLOAT>& target, double normalizer, double& accuracy, double& loglikelihood, uint from_case, uint to_case) {
+void fm_learn_mcmc_simultaneous::_evaluate_class(DVector<double>& pred, DVector<DATA_FLOAT>& target, double normalizer, double& accuracy, double& loglikelihood, uint from_case, uint to_case,int i) {
   double _loglikelihood = 0.0;
   uint _accuracy = 0;
   uint num_cases = 0;
+  if(i % 1 == 0){
+    std::ofstream ofile;
+    std::string si;
+    std::stringstream ss;
+    ss << i;
+    ss >> si;
+    std::string s1 = "prec_target_mcmc";
+    std::string s3 = ".txt";
+    const char* filename = (s1 + si + s3).data();
+    ofile.open(filename);
+//        ofile<<"precdict target "<<std::endl;
+    for (uint c = std::max((uint) 0, from_case); c < std::min((uint)pred.dim, to_case); c++) {
+       double p = pred(c) * normalizer;
+       ofile<< p << " " << target(c)<< std::endl;
+      }
+    }
   for (uint c = std::max((uint) 0, from_case); c < std::min((uint)pred.dim, to_case); c++) {
     double p = pred(c) * normalizer;
     if (((p >= 0.5) && (target(c) > 0.0)) || ((p < 0.5) && (target(c) < 0.0))) {

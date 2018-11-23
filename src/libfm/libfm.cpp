@@ -415,9 +415,9 @@ int main(int argc, char **argv) {
     fml->learn(train, test);
 
     // () Prediction at the end  (not for mcmc and als)
-    if (cmdline.getValue(param_method).compare("mcmc")) {
-      std::cout << "Final\t" << "Train=" << fml->evaluate(train) << "\tTest=" << fml->evaluate(test) << std::endl;
-    }
+//    if (cmdline.getValue(param_method).compare("mcmc")) {
+//      std::cout << "Final\t" << "Train=" << fml->evaluate(train) << "\tTest=" << fml->evaluate(test) << std::endl;
+//    }
 
     // () Save prediction
     if (cmdline.hasParameter(param_out)) {

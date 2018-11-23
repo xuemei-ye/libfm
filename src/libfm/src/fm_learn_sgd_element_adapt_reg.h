@@ -313,9 +313,9 @@ void fm_learn_sgd_element_adapt_reg::learn(Data& train, Data& test) {
     // (3) Evaluation
     iteration_time = (getusertime() - iteration_time);
 
-    double rmse_val = evaluate(*validation);
-    double rmse_train = evaluate(train);
-    double rmse_test = evaluate(test);
+    double rmse_val = evaluate(*validation,i);
+    double rmse_train = evaluate(train,i);
+    double rmse_test = evaluate(test,i);
     std::cout << "#Iter=" << std::setw(3) << i << "\tTrain=" << rmse_train << "\tTest=" << rmse_test << std::endl;
     if (log != NULL) {
       log->log("wmean", mean_w);
