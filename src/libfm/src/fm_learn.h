@@ -125,7 +125,7 @@ double fm_learn::evaluate_classification(Data& data,int& i) {
     std::stringstream ss;
     ss << i;
     ss >> si;
-    std::string s1 = "/prec_target_1123/prec_target_sgd";
+    std::string s1 = "./prec_target_1123/prec_target_sgd";
     std::string s3 = ".txt";
     const char* filename = (s1 + si + s3).data();
     ofile.open(filename);

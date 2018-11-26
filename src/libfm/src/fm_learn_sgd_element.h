@@ -29,6 +29,14 @@
 #define FM_LEARN_SGD_ELEMENT_H_
 
 #include "fm_learn_sgd.h"
+#include "../../fm_core/fm_model.h"
+
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <sstream>
+#include <cstring>
+
 
 class fm_learn_sgd_element: public fm_learn_sgd {
  public:
@@ -47,6 +55,7 @@ void fm_learn_sgd_element::init() {
 
 void fm_learn_sgd_element::learn(Data& train, Data& test) {
   fm_learn_sgd::learn(train, test);
+
 
   std::cout << "SGD: DON'T FORGET TO SHUFFLE THE ROWS IN TRAINING DATA TO GET THE BEST RESULTS." << std::endl;
   // SGD
@@ -73,6 +82,18 @@ void fm_learn_sgd_element::learn(Data& train, Data& test) {
       log->log("rmse_train", rmse_train);
       log->log("time_learn", iteration_time);
       log->newLine();
+    }
+    fm_model fm;
+    std::string si;
+    std::stringstream ss;
+    ss << i;
+    ss >> si;
+    std::string s1 = "./model_1123/fm_";
+    std::string s3 = ".txt";
+    const char* filename = (s1 + si + s3).data();
+    if (i % 10 == 0) {
+      std::cout << "Writing FM model to " << std::endl;
+      fm.saveModel(filename);
     }
   }
 }
